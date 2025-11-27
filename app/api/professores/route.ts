@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
-import { pool } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const result = await pool.query("SELECT * FROM Professor");
-    return NextResponse.json(result.rows);
+    // Busca todos os professores usando o Prisma
+    // Ele usa automaticamente a DATABASE_URL que configuramos na Vercel
+    const professores = await prisma.professor.findMany();
+
+    return NextResponse.json(professores);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Erro ao consultar banco" }, { status: 500 });
+    console.error("Erro ao buscar professores:", error);
+    return NextResponse.json(
+      { error: "Erro interno ao buscar professores" },
+      { status: 500 }
+    );
   }
 }
