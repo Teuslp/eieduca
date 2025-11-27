@@ -3,15 +3,18 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    // Busca todos os professores usando o Prisma
-    // Ele usa automaticamente a DATABASE_URL que configuramos na Vercel
     const professores = await prisma.professor.findMany();
-
     return NextResponse.json(professores);
-  } catch (error) {
-    console.error("Erro ao buscar professores:", error);
+  } catch (error: any) {
+
+    console.error("Erro CRÍTICO Prisma:", error);
+    
     return NextResponse.json(
-      { error: "Erro interno ao buscar professores" },
+      { 
+        message: "Erro ao buscar dados", 
+        error_code: error?.code, 
+        error_detail: error?.message 
+      }, 
       { status: 500 }
     );
   }
